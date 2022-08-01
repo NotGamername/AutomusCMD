@@ -23,7 +23,7 @@ void print_info(char *msg){
 
 int user_beats(){
     char in_str[LEN_STR]; //user input string
-    print_info("Enter first interval size in semitones: ");
+    print_info("Enter the total number of beats: ");
 
     //read input line, including trailing \n
     fgets(in_str, LEN_STR, stdin); //wait for input
@@ -36,7 +36,7 @@ int user_beats(){
 
 int user_subdivisions(){
     char in_str[LEN_STR]; //user input string
-    print_info("Enter second interval size in semitones: ");
+    print_info("Enter the rhythmic division factor: ");
 
     //read input line, including trailing \n
     fgets(in_str, LEN_STR, stdin); //wait for input
