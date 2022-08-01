@@ -84,8 +84,8 @@ int main(int argc, char *argv[])
 
 	srand(time(0));
 	am.bog = floor(osfinfo.samplerate/(am.bpm/60.0)); //quarter note beat duration in samples
-	am.measuredur = floor(am.beatsperbar/(am.bpm/60.0)); //measure duration in seconds
-	osfinfo.frames = osfinfo.samplerate * am.measuredur;
+	am.measuredur = am.beatsperbar/(am.bpm/60.0); //measure duration in seconds
+	osfinfo.frames = am.bog * am.beatsperbar;
 
 	//set N to number of frames and C to number of channels
 	N = osfinfo.frames;
@@ -123,7 +123,7 @@ int main(int argc, char *argv[])
 	am.sine_f0 = 440;
 	am.counter = 0;
 
-	printf("Meter is: %d/4\nSmallest Rhythm is: 1/%d of a beat\nAudio Duration: %d seconds\n",am.beatsperbar,am.subdivisions,am.measuredur);
+	printf("Generating one measure of %d/4\nSmallest rhythm is 1/%d note\nTempo is %dbpm\nAudio Duration: %f seconds\n",am.beatsperbar,(am.subdivisions*4),am.bpm,am.measuredur);
 
 	//pass our auto music structure to the Port Audio structure
 	paBuf.pam = &am;

@@ -65,7 +65,6 @@ void sine(double *y, int N, struct Automus *pam){
 }
 
 void rhym_choose(struct Automus *pam){
-    int beatsperbar = pam->beatsperbar; //beats per bar
     int subdivisions = pam->subdivisions; //smallest rhythmic value
     int bog = pam->bog; //original beat value in samples
     float beatsub = pam->beatsub; //fraction of bog

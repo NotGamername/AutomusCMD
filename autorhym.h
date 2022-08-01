@@ -24,7 +24,7 @@ struct Automus {
     float beatsub; //length of subdivision of the beat relative to beatdur
     int bog; //original beat value
     int notedur; //duration of one beat in samples
-    int measuredur; //duration of each measure in seconds
+    float measuredur; //duration of each measure in seconds
     int counter; //keeps track of how many samples have passed for a given note duration
     float rand; //random number used to calculate new note
     double attack_factor;
