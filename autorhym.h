@@ -18,7 +18,7 @@ struct Automus {
     float sine_phase;
     float sine_phase_inc;
     double ampl;
-    int measuredur; //duration of each measure in samples
+    int measuredur; //duration of each measure in seconds
     int counter; //keeps track of how many samples have passed for a given note duration
     float rand; //random number used to calculate new note
 };
@@ -26,9 +26,6 @@ struct Automus {
 //function prototypes
 void sine(double *y, int N, struct Automus *pam);
 void choose(struct Automus *pam);
-int user_i1();
-int user_i2();
-int user_mrange();
+int user_beats();
+int user_subdivisions();
 int user_bpm();
-int user_fstart();
-int user_sec();

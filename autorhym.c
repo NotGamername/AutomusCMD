@@ -3,6 +3,12 @@
 #include <math.h>
 #include "autorhym.h"
 
+//make a function that generates a sine wave with decayed tail
+
+//call the function whenever a rhythmic value is chosen
+
+//perform the process only for the duration of 1 measure (adding multiple measures function later on)
+
 void sine(double *y, int N, struct Automus *pam){
     int fs, bpm, i, ND;
     double ampl;
