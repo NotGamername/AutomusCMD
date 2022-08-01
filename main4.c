@@ -70,8 +70,8 @@ int main(int argc, char *argv[])
 
 	//user sets interval 2
 	am.subdivisions = user_subdivisions();
-	if ((am.subdivisions > 8) || (am.subdivisions < 1)){
-		printf("Please input a whole number between 1 and 8\n");
+	if ((am.subdivisions > 4) || (am.subdivisions < 1)){
+		printf("Please input a whole number between 1 and 4\n");
 		return -1;
 	}
 
@@ -83,7 +83,8 @@ int main(int argc, char *argv[])
 	}
 
 	srand(time(0));
-	am.measuredur = floor(am.beatsperbar/(am.bpm/60.0));
+	am.bog = floor(osfinfo.samplerate/(am.bpm/60.0)); //quarter note beat duration in samples
+	am.measuredur = floor(am.beatsperbar/(am.bpm/60.0)); //measure duration in seconds
 	osfinfo.frames = osfinfo.samplerate * am.measuredur;
 
 	//set N to number of frames and C to number of channels
@@ -116,6 +117,7 @@ int main(int argc, char *argv[])
 	paBuf.done = false;
 
 	am.fs = osfinfo.samplerate;
+	am.notedur = am.bog;
 
 	am.sine_phase = 0;
 	am.sine_f0 = 440;
@@ -204,7 +206,7 @@ static int paCallback(
 		idbuf[i] = ifbuf[i];
 	}
 
-	sine(&odbuf[0], N, p->pam);
+	rhythm(&odbuf[0], N, p->pam);
 
 	//pass the output into the float version
 	for (int i = 0; i < N; i++){
