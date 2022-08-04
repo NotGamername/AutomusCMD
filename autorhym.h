@@ -21,9 +21,9 @@ struct Automus {
     float sine_phase;
     float sine_phase_inc;
     double ampl;
-    float beatsub; //length of subdivision of the beat relative to beatdur
-    int bog; //original beat value
-    int notedur; //duration of one beat in samples
+    float beatsub; //fraction of subdivision of the beat relative to bog
+    int bog; //original beat value in samples
+    int notedur; //duration of one note in samples
     float measuredur; //duration of each measure in seconds
     int counter; //keeps track of how many samples have passed for a given note duration
     double attack_factor;

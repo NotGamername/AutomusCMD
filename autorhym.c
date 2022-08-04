@@ -9,23 +9,6 @@
 
 //perform the process only for the duration of 1 measure (adding multiple measures function later on)
 
-// void rhythm(double *y, int N, struct Automus *pam){
-//     int ND = pam->notedur;
-
-//     //make sure we know when to change notes
-//     int i = pam->counter;
-
-//     for (int n = 0; n < N; n++){
-//         if (i > ND){
-//             sine(y, N, pam);
-//             rhym_choose(pam);
-//             printf("Chosen\n");
-//             i = 0;
-//         }
-//         i++;
-//     }
-// }
-
 void sine(double *y, int N, struct Automus *pam){
     int fs, i, ND;
     double ampl, attack_factor, decay_factor, drop_level, attack_amp, decay_amp;
@@ -67,7 +50,6 @@ void sine(double *y, int N, struct Automus *pam){
 
         if (i > ND){
             rhym_choose(pam);
-            printf("i is: %d\n", i);
             i = 0;
         }
         i++;
@@ -80,7 +62,8 @@ void sine(double *y, int N, struct Automus *pam){
 void rhym_choose(struct Automus *pam){
     int subdivisions = pam->subdivisions; //smallest rhythmic value
     int bog = pam->bog; //original beat value in samples
-    float beatsub = pam->beatsub; //fraction of bog
+    // float beatsub = pam->beatsub; //fraction of bog
+    float beatsub;
 
     int randologna = rand() % 12 + 1;
 
@@ -90,57 +73,52 @@ void rhym_choose(struct Automus *pam){
     {
     case 1:
         //quarter notes
-        beatsub = 1;
+        beatsub = 1.0;
 
-        pam->notedur = beatsub * bog;
+        pam->notedur = floor(bog/beatsub);
+        printf("Note Duration is: %d\n", pam->notedur);
 
         break;
     case 2:
         //eighth notes
         if (randologna % 2 == 0){
-            beatsub = 1/subdivisions;
-            printf("1/2\n");
+            beatsub = 2.0;
         } else {
-            beatsub = 2/subdivisions;
-            printf("2/2\n");
+            beatsub = 1.0;
         }
 
-        pam->notedur = beatsub * bog;
+        pam->notedur = floor(bog/beatsub);
+        printf("Note Duration is: %d\n", pam->notedur);
 
         break;
     case 3:
         //triplets
         if (randologna % 3 == 0){
-            beatsub = 1/subdivisions;
-            printf("1/3\n");
+            beatsub = 3.0;
         } else if (randologna % 2 == 0){
-            beatsub = 2/subdivisions;
-            printf("2/3\n");
+            beatsub = 1.5;
         } else {
-            beatsub = 3/subdivisions;
-            printf("3/3\n");
+            beatsub = 1.0;
         }
 
-        pam->notedur = beatsub * bog;
+        pam->notedur = floor(bog/beatsub);
+        printf("Note Duration is: %d\n", pam->notedur);
 
         break;
     case 4:
         //sixteenth notes
         if (randologna % 4 == 0){
-            beatsub = 1/subdivisions;
-            printf("1/4\n");
+            beatsub = 4.0;
         } else if (randologna % 3 == 0){
-            beatsub = 2/subdivisions;
-            printf("2/4\n");
+            beatsub = 2.0;
         } else if (randologna % 2 == 0){
-            beatsub = 3/subdivisions;
-            printf("3/4\n");
+            beatsub = 4.0/3.0;
         } else {
-            beatsub = 4/subdivisions;
-            printf("4/4\n");
+            beatsub = 1.0;
         }
 
-        pam->notedur = beatsub * bog;
+        pam->notedur = floor(bog/beatsub);
+        printf("Note Duration is: %d\n", pam->notedur);
 
         break;
     default:
