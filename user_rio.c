@@ -23,15 +23,28 @@ void print_info(char *msg){
 
 int user_beats(){
     char in_str[LEN_STR]; //user input string
-    print_info("Enter the total number of beats: ");
+    print_info("Enter the number of beats in a measure: ");
 
     //read input line, including trailing \n
     fgets(in_str, LEN_STR, stdin); //wait for input
     
-    int user_i1 = atoi(in_str);
+    int user_beats = atoi(in_str);
     clear();
 
-    return user_i1;
+    return user_beats;
+}
+
+int user_meas(){
+    char in_str[LEN_STR]; //user input string
+    print_info("Enter the total number of measures: ");
+
+    //read input line, including trailing \n
+    fgets(in_str, LEN_STR, stdin); //wait for input
+    
+    int user_meas = atoi(in_str);
+    clear();
+
+    return user_meas;
 }
 
 int user_subdivisions(){
@@ -41,10 +54,10 @@ int user_subdivisions(){
     //read input line, including trailing \n
     fgets(in_str, LEN_STR, stdin); //wait for input
 
-    int user_i2 = atoi(in_str);
+    int user_subdivisions = atoi(in_str);
     clear();
 
-    return user_i2;
+    return user_subdivisions;
 }
 
 int user_bpm(){

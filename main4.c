@@ -61,14 +61,21 @@ int main(int argc, char *argv[])
 		return -1;
 	}
 
-	//user sets interval 1
+	//user sets beats in a measure
 	am.beatsperbar = user_beats();
-	if ((am.beatsperbar > 32) || (am.beatsperbar < 1)){
+	if ((am.beatsperbar > 8) || (am.beatsperbar < 2)){
+		printf("Please input a whole number between 2 and 8\n");
+		return -1;
+	}
+
+	//user sets number of measures
+	am.nummeasures = user_meas();
+	if ((am.nummeasures > 32) || (am.nummeasures < 1)){
 		printf("Please input a whole number between 1 and 32\n");
 		return -1;
 	}
 
-	//user sets interval 2
+	//user sets beat subdivision
 	am.subdivisions = user_subdivisions();
 	if ((am.subdivisions > 4) || (am.subdivisions < 1)){
 		printf("Please input a whole number between 1 and 4\n");
@@ -84,8 +91,10 @@ int main(int argc, char *argv[])
 
 	srand(time(0));
 	am.bog = floor(osfinfo.samplerate/(am.bpm/60.0)); //quarter note beat duration in samples
-	am.measuredur = am.beatsperbar/(am.bpm/60.0); //measure duration in seconds
-	osfinfo.frames = am.bog * am.beatsperbar;
+	am.measuredursec = am.beatsperbar/(am.bpm/60.0); //measure duration in seconds
+	am.measuredursamp = am.bog * am.beatsperbar; //measure duration in samples
+	am.totaldur = am.bog * am.beatsperbar * am.nummeasures; //total duration in samples
+	osfinfo.frames = am.bog * am.beatsperbar * am.nummeasures;
 
 	//set N to number of frames and C to number of channels
 	N = osfinfo.frames;
@@ -122,8 +131,11 @@ int main(int argc, char *argv[])
 	am.sine_phase = 0;
 	am.sine_f0 = 440;
 	am.counter = 0;
+	am.meascounter = 0;
+	am.attack_amp = 1.0;
+	am.decay_amp = 1.0;
 
-	printf("Generating one measure of %d/4\nSmallest rhythm is 1/%d note\nTempo is %dbpm\nAudio Duration: %f seconds\n",am.beatsperbar,(am.subdivisions*4),am.bpm,am.measuredur);
+	printf("Generating one measure of %d/4\nSmallest rhythm is 1/%d note\nTempo is %dbpm\nAudio Duration: %f seconds\n",am.beatsperbar,(am.subdivisions*4),am.bpm,am.measuredursec);
 
 	//pass our auto music structure to the Port Audio structure
 	paBuf.pam = &am;
