@@ -7,7 +7,7 @@
 #define BUF_MID  (BUF_LEN/2)
 #define FS_AMPL             0.5 /* -6 dB FS */
 #define ATTACK_FACTOR       0.99800 /* attack time constant of 10 ms */
-#define DECAY_FACTOR        0.99800 /* decay time constant of 1.0 sec */
+#define DECAY_FACTOR        0.99980 /* decay time constant of 1.0 sec */
 #define DROP_LEVEL          0.001  /* -60 dBFS */
 
 struct Automus {

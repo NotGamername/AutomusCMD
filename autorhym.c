@@ -153,25 +153,34 @@ void note_choose(struct Automus *pam){
     float fog = pam->fog; //original chosen starting frequency
 
     //get val by sampling lfo, pink noise, input wav file, or ANYTHING
-    float val = (rand() % 200 - 100)/100;
+    float val = (rand() % 200 - 100)/100.0;
+    printf("Val: %f\n",val);
 
     //if gap between f0 and range boundaries is small, change big, is gap is big, change small
     if (f0 >= fog * pow(2,(((range/2)-i0)/12))){
         f0 *= powf(2,(-ibig/12));
+        printf("1\n");
     } else if (f0 >= fog * pow(2,(((range/2)-ibig)/12))){
         f0 *= powf(2,(-i0/12));
+        printf("2\n");
     } else if (f0 <= fog * pow(2,(((range/-2)+i0)/12))){
         f0 *= powf(2,(ibig/12));
+        printf("3\n");
     } else if (f0 <= fog * pow(2,(((range/-2)+ibig)/12))){
         f0 *= powf(2,(i0/12));
+        printf("4\n");
     } else if (-1 <= val && val < -0.5){ //if gap is not within range boundaries, proceed as normal
         f0 *= powf(2,(-i0/12));
+        printf("5\n");
     } else if (-0.5 <= val && val < 0){
         f0 *= powf(2,(-ibig/12));
+        printf("6\n");
     } else if (0 <= val && val < 0.5){
         f0 *= powf(2,(i0/12));
+        printf("7\n");
     } else if (0.5 <= val && val <= 1){
         f0 *= powf(2,(ibig/12));
+        printf("8\n");
     } else {
         printf("Chaos ensues\n");
     }

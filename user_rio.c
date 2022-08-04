@@ -15,8 +15,8 @@ void clear(){
 void print_info(char *msg){
     //user I/O using printf() and getchar()
     clear();
-    printf("Welcome to my Automated Music Generation Experience!\n"); //line 0
-    printf("Enter an interval size below\n");
+    printf("Welcome to Max's Automated Music Generation Experience!\n"); //line 0
+    printf("Please set some parameters below to customize your musical experience.\n");
     printf("%s", msg);
     fflush(stdout);
 }
