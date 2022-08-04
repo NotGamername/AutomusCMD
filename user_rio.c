@@ -72,3 +72,55 @@ int user_bpm(){
 
     return user_bpm;
 }
+
+int user_i1(){
+    char in_str[LEN_STR]; //user input string
+    print_info("Enter first interval size in semitones: ");
+
+    //read input line, including trailing \n
+    fgets(in_str, LEN_STR, stdin); //wait for input
+    
+    int user_i1 = atoi(in_str);
+    clear();
+
+    return user_i1;
+}
+
+int user_i2(){
+    char in_str[LEN_STR]; //user input string
+    print_info("Enter second interval size in semitones: ");
+
+    //read input line, including trailing \n
+    fgets(in_str, LEN_STR, stdin); //wait for input
+
+    int user_i2 = atoi(in_str);
+    clear();
+
+    return user_i2;
+}
+
+int user_fstart(){
+    char in_str[LEN_STR]; //user input string
+    print_info("Enter starting pitch frequency in Hz: ");
+
+    //read input line, including trailing \n
+    fgets(in_str, LEN_STR, stdin); //wait for input
+
+    int user_fstart = atoi(in_str);
+    clear();
+
+    return user_fstart;
+}
+
+int user_mrange(){
+    char in_str[LEN_STR]; //user input string
+    print_info("Enter melodic range in octaves: ");
+
+    //read input line, including trailing \n
+    fgets(in_str, LEN_STR, stdin); //wait for input
+
+    int user_range = atoi(in_str);
+    clear();
+
+    return user_range;
+}

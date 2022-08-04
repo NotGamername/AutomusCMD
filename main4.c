@@ -89,7 +89,36 @@ int main(int argc, char *argv[])
 		return -1;
 	}
 
+	//user sets interval 1
+	am.i1 = user_i1();
+	if ((am.i1 > 12) || (am.i1 <= 0)){
+		printf("Please input a whole number between 0 and 12\n");
+		return -1;
+	}
+
+	//user sets interval 2
+	am.i2 = user_i2();
+	if ((am.i2 > 12) || (am.i2 <= 0) || (am.i2 == am.i1)){
+		printf("Please input a whole number between 0 and 12 that is different from the first interval number\n");
+		return -1;
+	}
+
+	//user sets starting frequency
+	am.sine_f0 = user_fstart();
+	if ((am.sine_f0 > 1760) || (am.sine_f0 < 110)){
+		printf("Please input a frequency between 110Hz and 1760Hz\n");
+		return -1;
+	}
+
+	//user sets range
+	int octaves = user_mrange();
+	if ((octaves > 8) || (octaves < 2)){
+		printf("Please input a whole number between 2 and 8 octaves\n");
+		return -1;
+	}
+
 	srand(time(0));
+
 	am.bog = floor(osfinfo.samplerate/(am.bpm/60.0)); //quarter note beat duration in samples
 	am.measuredursec = am.beatsperbar/(am.bpm/60.0); //measure duration in seconds
 	am.measuredursamp = am.bog * am.beatsperbar; //measure duration in samples
@@ -128,14 +157,24 @@ int main(int argc, char *argv[])
 	am.fs = osfinfo.samplerate;
 	am.notedur = am.bog;
 
+	//initialize important things
+	if (am.i1 < am.i2){
+		am.i0 = am.i1;
+		am.ibig = am.i2;
+	} else if (am.i1 > am.i2){
+		am.i0 = am.i2;
+		am.ibig = am.i1;
+	}
+
+	am.range = 12 * octaves;
 	am.sine_phase = 0;
-	am.sine_f0 = 440;
-	am.counter = 0;
+	am.fog = am.sine_f0;
+	am.notecounter = 0;
 	am.meascounter = 0;
 	am.attack_amp = 1.0;
 	am.decay_amp = 1.0;
 
-	printf("Generating one measure of %d/4\nSmallest rhythm is 1/%d note\nTempo is %dbpm\nAudio Duration: %f seconds\n",am.beatsperbar,(am.subdivisions*4),am.bpm,am.measuredursec);
+	printf("Generating one measure of %d/4\nSmallest rhythm is 1/%d note\nTempo is %dbpm\nAudio Duration: %f seconds\nStarting Frequency is: %fHz\nSmallest Interval is: %d semitones\nLargest Interval is: %d semitones\nRange: %d\n",am.beatsperbar,(am.subdivisions*4),am.bpm,am.measuredursec,am.fog,am.i0,am.ibig,am.range);
 
 	//pass our auto music structure to the Port Audio structure
 	paBuf.pam = &am;

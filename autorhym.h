@@ -14,22 +14,33 @@ struct Automus {
     float output[FRAMES_PER_BUFFER];
     float fs; //sampling freq, Hz
     float buffer[BUF_LEN]; //delay buffer
+
     int beatsperbar; //user-defined meter
     int nummeasures; //number of measures
     int subdivisions; //user-defined subdivisions of a beat
     int bpm; //user-defined rate of new note generation
+
+    int i0; //the lower of the two chosen intervals
+    int ibig; //higher of the chosen intervals
+    int i1; //user-defined first interval
+    int i2; //user-defined second interval
+    int range; //user-defined frequency range of random note generation
     float sine_f0; //user-defined starting frequency, is updated as random notes are generated
     float sine_phase;
     float sine_phase_inc;
+
     double ampl;
     float beatsub; //fraction of subdivision of the beat relative to bog
     int bog; //original beat value in samples
+    float fog; //starting frequency kept in memory for range calculation
+
     int notedur; //duration of one note in samples
     int measuredursamp; //length of measure in samples
     float measuredursec; //duration of each measure in seconds
     float totaldur; //total clip duration in samples
-    int counter; //keeps track of how many samples have passed for a given note duration
+    int notecounter; //keeps track of how many samples have passed for a given note duration
     int meascounter;
+
     double attack_factor;
     double decay_factor;
     double attack_amp; /* save attack amplitude for next sample */
@@ -37,10 +48,15 @@ struct Automus {
 };
 
 //function prototypes
-void rhythm(double *y, int N, struct Automus *pam);
+//void rhythm(double *y, int N, struct Automus *pam);
 void sine(double *y, int N, struct Automus *pam);
+void note_choose(struct Automus *pam);
 void rhym_choose(struct Automus *pam);
 int user_beats();
 int user_meas();
 int user_subdivisions();
 int user_bpm();
+int user_i1();
+int user_i2();
+int user_fstart();
+int user_mrange();
