@@ -22,7 +22,15 @@ void sine(double *y, int N, struct Automus *pam){
     ND = pam->notedur;
     MD = pam->measuredursamp;
 
-    ampl = FS_AMPL;
+    //make sure we know when to change notes
+    i = pam->notecounter;
+    k = pam->meascounter;
+
+    if (k < FRAMES_PER_BUFFER){
+        ampl = AMPL_LOUD;
+    } else {
+        ampl = AMPL_SOFT;
+    }
     attack_factor = ATTACK_FACTOR;
     decay_factor = DECAY_FACTOR;
     drop_level = DROP_LEVEL;
@@ -32,40 +40,38 @@ void sine(double *y, int N, struct Automus *pam){
     //our sampled sine wave value for each instance
     double v;
 
-    //make sure we know when to change notes
-    i = pam->notecounter;
-    k = pam->meascounter;
-
     for (int n = 0; n < N; n++){
         v = 0;
         if (phase_inc > -1){
             v += ampl * sin(phase);
             phase += phase_inc;
         }
+        v *= (1.0 - attack_amp) * (decay_amp);
+        decay_amp *= DECAY_FACTOR;
+        attack_amp *= ATTACK_FACTOR;
+        if (decay_amp < DROP_LEVEL){
+            v *= 0;
+        }
+        y[n] = v;
 
         if (k > MD){
-            note_choose(pam);
-            rhym_choose(pam);
+            //note_choose(pam);
+            choose(pam);
             i = 0;
             k = 0;
             attack_amp = 1.0;
             decay_amp = 1.0;
+            printf("MEASURE\n-------\n");
+            break;
         }
 
-        if (i < ND){
-            v *= (1 - attack_amp) * (decay_amp);
-            decay_amp *= DECAY_FACTOR;
-            attack_amp *= ATTACK_FACTOR;
-            if (decay_amp < DROP_LEVEL){
-                v *= 0;
-            }
-            y[n] = v;
-        } else if (i > ND){
-            note_choose(pam);
-            rhym_choose(pam);
+        if (i > ND){
+            //note_choose(pam);
+            choose(pam);
             i = 0;
             attack_amp = 1.0;
             decay_amp = 1.0;
+            break;
         }
         i++;
         k++;
@@ -78,14 +84,48 @@ void sine(double *y, int N, struct Automus *pam){
     pam->sine_phase = phase;
 }
 
-void rhym_choose(struct Automus *pam){
+void choose(struct Automus *pam){
     int subdivisions = pam->subdivisions; //smallest rhythmic value
     int bog = pam->bog; //original beat value in samples
     float beatsub;
 
+    float f0 = pam->sine_f0; //current note
+    float i0 = pam->i0; //smallest interval
+    float ibig = pam->ibig; //biggest interval
+    int range = pam->range; //allowed range of melody
+    float fog = pam->fog; //original chosen starting frequency
+
+    //get val by sampling lfo, pink noise, input wav file, or ANYTHING
+    float val = (rand() % 200 - 100)/100.0;
+
+    //if gap between f0 and range boundaries is small, change big, is gap is big, change small
+    if (f0 >= fog * pow(2,(((range/2)-i0)/12))){
+        f0 *= powf(2,(-ibig/12));
+    } else if (f0 >= fog * pow(2,(((range/2)-ibig)/12))){
+        f0 *= powf(2,(-i0/12));
+    } else if (f0 <= fog * pow(2,(((range/-2)+i0)/12))){
+        f0 *= powf(2,(ibig/12));
+    } else if (f0 <= fog * pow(2,(((range/-2)+ibig)/12))){
+        f0 *= powf(2,(i0/12));
+    } else if (-1 <= val && val < -0.5){ //if gap is not within range boundaries, proceed as normal
+        f0 *= powf(2,(-i0/12));
+    } else if (-0.5 <= val && val < 0){
+        f0 *= powf(2,(-ibig/12));
+    } else if (0 <= val && val < 0.5){
+        f0 *= powf(2,(i0/12));
+    } else if (0.5 <= val && val <= 1){
+        f0 *= powf(2,(ibig/12));
+    } else {
+        printf("Frequency chaos ensues\n");
+    }
+
+    //replace sine tone for new frequency
+    pam->sine_f0 = f0;
+    printf("New f0: %fHz\n-------\n",f0);
+
     int randologna = rand() % 12 + 1;
 
-    printf("Rand is: %d\n",randologna);
+    //printf("Rand is: %d\n",randologna);
 
     switch (subdivisions)
     {
@@ -94,8 +134,7 @@ void rhym_choose(struct Automus *pam){
         beatsub = 1.0;
 
         pam->notedur = floor(bog/beatsub);
-        printf("Note Duration is: %d\n", pam->notedur);
-
+        // printf("1/%f Note\n", (beatsub*4));
         break;
     case 2:
         //eighth notes
@@ -106,8 +145,7 @@ void rhym_choose(struct Automus *pam){
         }
 
         pam->notedur = floor(bog/beatsub);
-        printf("Note Duration is: %d\n", pam->notedur);
-
+        // printf("1/%f Note\n", (beatsub*4));
         break;
     case 3:
         //triplets
@@ -120,8 +158,7 @@ void rhym_choose(struct Automus *pam){
         }
 
         pam->notedur = floor(bog/beatsub);
-        printf("Note Duration is: %d\n", pam->notedur);
-
+        // printf("1/%f Note\n", (beatsub*4));
         break;
     case 4:
         //sixteenth notes
@@ -136,63 +173,10 @@ void rhym_choose(struct Automus *pam){
         }
 
         pam->notedur = floor(bog/beatsub);
-        printf("Note Duration is: %d\n", pam->notedur);
-
+        // printf("1/%f Note\n", (beatsub*4));
         break;
     default:
-        printf("Chaos ensues\n");
+        printf("Rhythmic chaos ensues\n");
         break;
     }
-}
-
-void note_choose(struct Automus *pam){
-    float f0 = pam->sine_f0; //current note
-    float i0 = pam->i0; //smallest interval
-    float ibig = pam->ibig; //biggest interval
-    int range = pam->range; //allowed range of melody
-    float fog = pam->fog; //original chosen starting frequency
-
-    //get val by sampling lfo, pink noise, input wav file, or ANYTHING
-    float val = (rand() % 200 - 100)/100.0;
-    printf("Val: %f\n",val);
-
-    //if gap between f0 and range boundaries is small, change big, is gap is big, change small
-    if (f0 >= fog * pow(2,(((range/2)-i0)/12))){
-        f0 *= powf(2,(-ibig/12));
-        printf("1\n");
-    } else if (f0 >= fog * pow(2,(((range/2)-ibig)/12))){
-        f0 *= powf(2,(-i0/12));
-        printf("2\n");
-    } else if (f0 <= fog * pow(2,(((range/-2)+i0)/12))){
-        f0 *= powf(2,(ibig/12));
-        printf("3\n");
-    } else if (f0 <= fog * pow(2,(((range/-2)+ibig)/12))){
-        f0 *= powf(2,(i0/12));
-        printf("4\n");
-    } else if (-1 <= val && val < -0.5){ //if gap is not within range boundaries, proceed as normal
-        f0 *= powf(2,(-i0/12));
-        printf("5\n");
-    } else if (-0.5 <= val && val < 0){
-        f0 *= powf(2,(-ibig/12));
-        printf("6\n");
-    } else if (0 <= val && val < 0.5){
-        f0 *= powf(2,(i0/12));
-        printf("7\n");
-    } else if (0.5 <= val && val <= 1){
-        f0 *= powf(2,(ibig/12));
-        printf("8\n");
-    } else {
-        printf("Chaos ensues\n");
-    }
-
-    //warning if outside of range
-    if (f0 < fog * pow(2,(((range/-2)-1)/12))){
-        printf("Too low\n");
-    } else if (f0 > fog * pow(2,(((range/2)+1)/12))) {
-        printf("Too high\n");
-    }
-
-    //replace sine tone for new frequency
-    pam->sine_f0 = f0;
-    printf("New f0: %fHz\n",f0);
 }

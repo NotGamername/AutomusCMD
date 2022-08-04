@@ -84,8 +84,8 @@ int main(int argc, char *argv[])
 
 	//user sets bpm
 	am.bpm = user_bpm();
-	if ((am.bpm > 480) || (am.bpm < 30)){
-		printf("Please input a tempo between 30 and 480 beats per minute\n");
+	if ((am.bpm > 240) || (am.bpm < 30)){
+		printf("Please input a tempo between 30 and 240 beats per minute\n");
 		return -1;
 	}
 
@@ -180,13 +180,13 @@ int main(int argc, char *argv[])
 	paBuf.pam = &am;
 
     //start up Port Audio
-    printf("Starting PortAudio\n");
+    printf("Starting PortAudio\n-------\n");
     stream = startupPa(1, osfinfo.channels, 
       osfinfo.samplerate, BLK_LEN, paCallback, &paBuf);
 
 	//sleep and let callback process audio until done 
     while (!paBuf.done) {
-    	printf("%d\n", paBuf.next_frame);
+    	// printf("%d\n", paBuf.next_frame);
     	sleep(1);
     }
 

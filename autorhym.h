@@ -2,18 +2,20 @@
 #define MAX_COEF	256
 #define FRAMES_PER_BUFFER   1024
 #define PI       3.14159265358979323846 //pi
-#define SoS        343.0 //speed of sound, meters per second
-#define BUF_LEN  8*1024
-#define BUF_MID  (BUF_LEN/2)
-#define FS_AMPL             0.5 /* -6 dB FS */
-#define ATTACK_FACTOR       0.99800 /* attack time constant of 10 ms */
-#define DECAY_FACTOR        0.99980 /* decay time constant of 1.0 sec */
-#define DROP_LEVEL          0.001  /* -60 dBFS */
+#define AMPL_LOUD           0.4 /* -8 dB FS */
+#define AMPL_SOFT           0.2 /* -14 dB FS */
+// #define ATTACK_FACTOR       0.99800 /* attack time constant of 10 ms */
+#define ATTACK_FACTOR       0.99600 /* attack time constant of 5 ms */
+// #define DECAY_FACTOR        0.99980 /* decay time constant of 100 ms */
+// #define DECAY_FACTOR        0.99960 /* decay time constant of 50 ms */
+#define DECAY_FACTOR        0.99800 /* decay time constant of 10 ms */
+// #define DROP_LEVEL          0.00001  /* -100 dBFS */
+// #define DROP_LEVEL          0.001  /* -60 dBFS */
+#define DROP_LEVEL          0.1  /* -20 dBFS */
 
 struct Automus {
     float output[FRAMES_PER_BUFFER];
     float fs; //sampling freq, Hz
-    float buffer[BUF_LEN]; //delay buffer
 
     int beatsperbar; //user-defined meter
     int nummeasures; //number of measures
@@ -48,10 +50,8 @@ struct Automus {
 };
 
 //function prototypes
-//void rhythm(double *y, int N, struct Automus *pam);
 void sine(double *y, int N, struct Automus *pam);
-void note_choose(struct Automus *pam);
-void rhym_choose(struct Automus *pam);
+void choose(struct Automus *pam);
 int user_beats();
 int user_meas();
 int user_subdivisions();
