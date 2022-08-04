@@ -26,7 +26,6 @@ struct Automus {
     int notedur; //duration of one beat in samples
     float measuredur; //duration of each measure in seconds
     int counter; //keeps track of how many samples have passed for a given note duration
-    float rand; //random number used to calculate new note
     double attack_factor;
     double decay_factor;
     double attack_amp; /* save attack amplitude for next sample */

@@ -199,14 +199,12 @@ static int paCallback(
 		N = p->total_frame - p->next_frame;
 	}
 
-	p->pam->rand = rand() % 200 - 100;
-
 	//pass input buffer into the double version
 	for (int i = 0; i < N; i++){
 		idbuf[i] = ifbuf[i];
 	}
 
-	rhythm(&odbuf[0], N, p->pam);
+	sine(&odbuf[0], N, p->pam);
 
 	//pass the output into the float version
 	for (int i = 0; i < N; i++){
