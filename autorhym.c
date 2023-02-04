@@ -4,7 +4,7 @@
 #include "autorhym.h"
 
 void sine(double *y, int N, struct Automus *pam){
-    int fs, i, k, ND, MD;
+    int fs, i, k, ND, MD, wf, numot;
     double ampl, attack_factor, decay_factor, drop_level, attack_amp, decay_amp;
     float f0, phase, phase_inc;
 
@@ -15,6 +15,8 @@ void sine(double *y, int N, struct Automus *pam){
     phase_inc = 2*PI*f0/fs;
     ND = pam->notedur;
     MD = pam->measuredursamp;
+    wf = pam->waveform;
+    numot = (2 * NUM_OT) + 3;
 
     //make sure we know when to change notes
     i = pam->notecounter;
@@ -36,10 +38,48 @@ void sine(double *y, int N, struct Automus *pam){
 
     for (int n = 0; n < N; n++){
         v = 0;
-        if (phase_inc > -1){
-            v += ampl * sin(phase);
+        // if (phase_inc > -1){
+        //     v += ampl * sin(phase);
+        //     phase += phase_inc;
+        // }
+
+
+        if (phase_inc > -1)
+        {
+            if (wf == 2){ //triangle
+                v += ampl * sin(phase);
+                for (int m = 2; m < numot; m++){
+                    if (m % 2 == 0){
+                        continue;
+                    }
+                v += pow(-1.0,((m-1)/2)) * (1/pow(m,2.0)) * sin(m * phase);
+            }
+            v *= 0.5; //normalization factor relative to sine wave, -6dB
             phase += phase_inc;
+            } else if (wf == 3){ //sawtooth
+                v += ampl * sin(phase);
+                for (int m = 2; m < numot; m++){
+                    v += (1.0/m) * sin(m * phase);
+                }
+                v *= -1 * 0.1; //normalization factor relative to sine wave, -20dB
+                phase += phase_inc;
+            } else if (wf == 4){ //square
+                v += ampl * sin(phase);
+                for (int m = 2; m < numot; m++){
+                    if (m % 2 == 0){
+                        continue;
+                    }
+                    v += (1.0/m) * sin(m * phase);
+                }
+                v *= 0.2; //normalization factor relative to sine wave, -14dB
+                phase += phase_inc;
+            } else { //sine
+                v += ampl * sin(phase);
+                phase += phase_inc;
+            }
         }
+
+        
         v *= (1.0 - attack_amp) * (decay_amp);
         decay_amp *= DECAY_FACTOR;
         attack_amp *= ATTACK_FACTOR;

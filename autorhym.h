@@ -12,6 +12,7 @@
 // #define DROP_LEVEL          0.00001  /* -100 dBFS */
 // #define DROP_LEVEL          0.001  /* -60 dBFS */
 #define DROP_LEVEL          0.1  /* -20 dBFS */
+#define NUM_OT              100
 
 struct Automus {
     float output[FRAMES_PER_BUFFER];
@@ -30,6 +31,7 @@ struct Automus {
     float sine_f0; //user-defined starting frequency, is updated as random notes are generated
     float sine_phase;
     float sine_phase_inc;
+    int waveform; //index to choose shape of waveform
 
     double ampl;
     float beatsub; //fraction of subdivision of the beat relative to bog
@@ -60,3 +62,4 @@ int user_i1();
 int user_i2();
 int user_fstart();
 int user_mrange();
+int user_waveform();

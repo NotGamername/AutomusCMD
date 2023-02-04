@@ -117,6 +117,13 @@ int main(int argc, char *argv[])
 		return -1;
 	}
 
+	//user sets waveform type
+	am.waveform = user_waveform();
+	if ((am.waveform != 4) && (am.waveform != 3) && (am.waveform != 2) && (am.waveform != 1)){
+		printf("Please input 1 for sine, 2 for triangle, 3 for sawtooth, or 4 for square\n");
+		return -1;
+	}
+
 	srand(time(0));
 
 	am.bog = floor(osfinfo.samplerate/(am.bpm/60.0)); //quarter note beat duration in samples

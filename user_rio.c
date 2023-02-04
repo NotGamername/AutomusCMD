@@ -124,3 +124,16 @@ int user_mrange(){
 
     return user_range;
 }
+
+int user_waveform(){
+    char in_str[LEN_STR]; //user input string
+    print_info("Enter waveform type index: ");
+
+    //read input line, including trailing \n
+    fgets(in_str, LEN_STR, stdin); //wait for input
+
+    int user_waveform = atoi(in_str);
+    clear();
+
+    return user_waveform;
+}
